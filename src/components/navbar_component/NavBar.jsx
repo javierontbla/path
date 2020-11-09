@@ -19,7 +19,7 @@ import {
   Icon,
 } from "./NavBar_styles";
 
-const NavBar = () => {
+const NavBar = ({ select_algorithm }) => {
   return (
     <NavContainer>
       <FullTitleContainer>
@@ -35,7 +35,9 @@ const NavBar = () => {
           <OptionsTitle>Algorithms</OptionsTitle>
           <SquareBracket />
           <Options>
-            <Option>A*</Option>
+            <Option onClick={() => select_algorithm("A_STAR_ALGORITHM")}>
+              A*
+            </Option>
             <Option>Dijkstra</Option>
             <Option>BFS</Option>
           </Options>

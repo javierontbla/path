@@ -1,10 +1,14 @@
 import React from "react";
 
-import { NodeContainer } from "./Node_styles";
+import "./Node_styles.css";
 
-const Node = ({ start_node, end_node }) => {
-  if (start_node) console.log("START PASSING");
-  return <NodeContainer start_node={start_node} end_node={end_node} />;
+const Node = ({ column, row, start_node, end_node }) => {
+  return (
+    <div
+      className={`node_${start_node ? `start` : ``}${end_node ? `end` : ``}`}
+      id={`node_${column}_${row}`}
+    ></div>
+  );
 };
 
 export default Node;

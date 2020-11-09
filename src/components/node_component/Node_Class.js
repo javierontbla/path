@@ -3,6 +3,8 @@ export class NodeClass {
     f,
     g,
     h,
+    i,
+    j,
     distance,
     parent,
     visited,
@@ -15,6 +17,8 @@ export class NodeClass {
     this.f = f;
     this.g = g;
     this.h = h;
+    this.i = i;
+    this.j = j;
     this.distance = distance;
     this.parent = parent;
     this.visited = visited;

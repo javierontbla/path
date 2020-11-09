@@ -1,0 +1,44 @@
+:root {
+  --border: #e4e6e4;
+  --red: #e04136;
+  --visited: #6ab83f;
+}
+
+.node_,
+.node_start,
+.node_end,
+.node_obstacle,
+.node_visited,
+.node_path {
+  width: 28px;
+  padding-top: 100%;
+  border: 1px solid var(--border);
+}
+
+.node_ {
+  background-color: transparent;
+}
+
+.node_start {
+  background-color: var(--red);
+}
+
+.node_end {
+  background-color: var(--red);
+}
+
+.node_obstacle {
+  background-color: var(--border);
+}
+
+.node_visited {
+  background-color: var(--visited);
+}
+
+.node_path {
+  background-color: var(--red);
+}
+
+.node_:hover {
+  cursor: pointer;
+}
