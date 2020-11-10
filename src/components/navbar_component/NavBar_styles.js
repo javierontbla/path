@@ -1,9 +1,47 @@
-import styled from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { colors } from "../../colors/colors";
 
 const { red, white } = colors;
+
+const IconAnimation = keyframes`
+  from {
+    display: none;
+    transition: opacity 0.5s ease-out;
+    opacity: 0;
+  } 
+  to {
+    opacity: 1;
+    display: block;
+  }
+`;
+
+const Option = css`
+  width: fit-content;
+  height: fit-content;
+  font-size: 1rem;
+  padding: 0.5rem;
+  margin: 0rem 0.4rem 0rem 0.4rem;
+  text-align: center;
+  transition: color 150ms ease-in-out;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:after {
+    display: block;
+    content: "";
+    border-bottom: solid 2px ${red};
+    transform: scaleX(0);
+    transition: transform 300ms ease-in-out;
+  }
+
+  &:hover:after {
+    transform: scaleX(1);
+  }
+`;
 
 export const NavContainer = styled.div`
   display: flex;
@@ -82,29 +120,29 @@ export const Options = styled.div`
   padding: 0rem 0.2rem 0.2rem 0.2rem;
 `;
 
-export const Option = styled.div`
-  width: fit-content;
-  height: fit-content;
-  font-size: 1rem;
-  padding: 0.5rem;
-  margin: 0rem 0.4rem 0rem 0.4rem;
-  text-align: center;
+export const Option1 = styled.div`
+  ${Option};
+  color: ${(props) => (props.option ? `${red}` : "")};
+`;
 
-  &:hover {
-    cursor: pointer;
-  }
+export const Option2 = styled.div`
+  ${Option};
+  color: ${(props) => (props.option ? `${red}` : "")};
+`;
 
-  &:after {
-    display: block;
-    content: "";
-    border-bottom: solid 2px ${red};
-    transform: scaleX(0);
-    transition: transform 300ms ease-in-out;
-  }
+export const Option3 = styled.div`
+  ${Option};
+  color: ${(props) => (props.option ? `${red}` : "")};
+`;
 
-  &:hover:after {
-    transform: scaleX(1);
-  }
+export const Option4 = styled.div`
+  ${Option};
+  color: ${(props) => (props.option ? `${red}` : "")};
+`;
+
+export const Option5 = styled.div`
+  ${Option};
+  color: ${(props) => (props.option ? `${red}` : "")};
 `;
 
 export const SquareBracket = styled.div`
@@ -125,8 +163,15 @@ export const FullIconsContainer = styled.div`
 `;
 
 export const Icon = styled(FontAwesomeIcon)`
-  font-size: 2rem;
+  font-size: ${(props) => (props.restart ? "1.9rem" : "2rem")};
   margin: 0rem 2rem 0rem 2rem;
+  animation: ${(props) =>
+    props.restart
+      ? css`
+          ${IconAnimation} 0.5s linear
+        `
+      : "none"};
+  color: ${white};
 
   &:hover {
     cursor: pointer;

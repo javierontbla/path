@@ -39,6 +39,8 @@
   background-color: var(--red);
 }
 
-.node_:hover {
+.node_,
+.node_start,
+.node_end:hover {
   cursor: pointer;
 }

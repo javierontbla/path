@@ -1,17 +1,31 @@
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 
 import { GridContainer, Columns, Rows, NodeContainer } from "./Grid_styles";
 import { NodeClass } from "../node_component/Node_Class";
 import Node from "../node_component/Node";
+import {
+  end_algorithm_animation_action,
+  end_maze_animation_action,
+  restart_grid_action,
+} from "../../redux/global_actions";
 import { a_star_algorithm } from "../../algorithms/a_star_algorithm";
 import { dijkstra_algorithm } from "../../algorithms/dijkstra";
 import { bfs_algorithm } from "../../algorithms/bfs_algorithm";
-import { recursive_division } from "../../mazes/recursive_division_algorithm";
+import { recursive_division_algorithm } from "../../mazes/recursive_division_algorithm";
+import { sidewinder_algorithm } from "../../mazes/sidewinder_algorithm";
 
-const Grid = () => {
+const Grid = ({
+  active_algorithm,
+  active_maze,
+  active_maze_on_grid,
+  play_algorithm_animation,
+  end_algorithm_animation,
+  end_maze_animation,
+}) => {
   // screen size
-  const w_size = Math.floor(window.innerWidth / 30);
-  const h_size = Math.floor((window.innerHeight - 150) / 30);
+  const columns = Math.floor(window.innerWidth / 30);
+  const rows = Math.floor((window.innerHeight - 150) / 30);
   // creating grid
   const [grid, set_grid] = useState([]);
   // setting i and j coordinates for start node & end node
@@ -27,9 +41,9 @@ const Grid = () => {
   useEffect(() => {
     const create_grid = () => {
       const temporary_grid = [];
-      for (let i = 0; i < w_size; i++) {
+      for (let i = 0; i < columns; i++) {
         temporary_grid[i] = [];
-        for (let j = 0; j < h_size; j++) {
+        for (let j = 0; j < rows; j++) {
           temporary_grid[i][j] = new NodeClass(
             0,
             0,
@@ -42,22 +56,31 @@ const Grid = () => {
             false,
             false,
             false,
-            i === 1 && j === 1 ? true : false, // assign start node
-            i === w_size - 2 && j === h_size - 2 ? true : false // assign end node
+            i === 0 && j === 0 ? true : false, // assign start node
+            i === columns - 1 && j === rows - 1 ? true : false // assign end node
           );
         }
       }
 
-      set_start_i(1);
-      set_start_j(1);
-      set_end_i(w_size - 2);
-      set_end_j(h_size - 2);
+      set_start_i(0);
+      set_start_j(0);
+      set_end_i(columns - 1);
+      set_end_j(rows - 1);
 
       return temporary_grid;
     };
 
     set_grid(create_grid());
   }, []);
+
+  useEffect(() => {
+    if (active_algorithm && play_algorithm_animation) {
+      run_algorithm(active_algorithm);
+    }
+    if (active_maze && !active_maze_on_grid) {
+      run_maze(active_maze);
+    }
+  });
 
   const path_animation = (path) => {
     for (let i = 0; i < path.length; i++) {
@@ -71,7 +94,8 @@ const Grid = () => {
           `node_${path[i].i}_${path[i].j}`
         );
         node_js.className = "node_path";
-      }, i * 100);
+        if (i === path.length - 2) end_algorithm_animation();
+      }, i * 75);
     }
   };
 
@@ -92,7 +116,7 @@ const Grid = () => {
 
         // calling final path animation function
         if (i === visited_nodes.length - 1) path_animation(path.reverse());
-      }, i * 100);
+      }, i * 75);
     }
   };
 
@@ -107,10 +131,21 @@ const Grid = () => {
         );
         const node_react = grid[maze[i].i][maze[i].j];
 
-        if (node_react.start_node) node_js.className = "node_start";
-        else if (node_react.end_node) node_js.className = "node_end";
-        else node_js.className = "node_obstacle";
-      }, i * 80);
+        if (node_react.start_node) {
+          node_js.className = "node_start";
+          node_react.obstacle = false;
+        } else if (node_react.end_node) {
+          node_js.className = "node_end";
+          node_react.obstacle = false;
+        } else {
+          node_js.className = "node_obstacle";
+          node_react.obstacle = true;
+        }
+
+        if (i === maze.length - 1) {
+          end_maze_animation();
+        }
+      }, i * 50);
     }
   };
 
@@ -189,30 +224,24 @@ const Grid = () => {
 
   const run_algorithm = (algorithm) => {
     switch (algorithm) {
-      case "A_STAR_ALGORITHM":
+      case "RUN_A_STAR_ALGORITHM":
         const [visited_a_star, path_a_star] = a_star_algorithm(
           grid[start_i][start_j],
           grid[end_i][end_j],
-          w_size,
-          h_size,
+          columns,
+          rows,
           grid
         );
         if (visited_a_star && path_a_star) {
           visited_nodes_animation(visited_a_star, path_a_star);
         }
         break;
-
-      case "DIJKSTRA_ALGORITHM":
-        /*
-    const res = dijkstra_algorithm(grid[end_i][end_j], w_size, h_size, grid);
-    */
-        break;
-      case "BFS_ALGORITHM":
+      case "RUN_BFS_ALGORITHM":
         const [visited_bfs, path_bfs] = bfs_algorithm(
           grid[start_i][start_j],
           grid[end_i][end_j],
-          w_size,
-          h_size,
+          columns,
+          rows,
           grid
         );
         if (visited_bfs && path_bfs) {
@@ -224,14 +253,28 @@ const Grid = () => {
     }
   };
 
-  const run_maze = () => {
-    const rec = recursive_division(grid, w_size, h_size);
-    maze_nodes_animation(rec);
+  const run_maze = (maze) => {
+    switch (maze) {
+      case "RUN_RECURSIVE_DIVISION_ALGORITHM":
+        const recursive_maze = recursive_division_algorithm(
+          grid,
+          columns,
+          rows
+        );
+        maze_nodes_animation(recursive_maze);
+        break;
+
+      case "RUN_SIDEWINDER_ALGORITHM":
+        const sidewinder_maze = sidewinder_algorithm(grid, columns, rows);
+        maze_nodes_animation(sidewinder_maze);
+        break;
+      default:
+        break;
+    }
   };
 
   return (
     <>
-      <button onClick={() => run_maze()}>recursive</button>
       <GridContainer>
         <Columns>
           {grid.map((column, i) => {
@@ -263,4 +306,24 @@ const Grid = () => {
   );
 };
 
-export default Grid;
+// redux
+const mapStateToProps = ({
+  global_reducer: {
+    active_algorithm,
+    active_maze,
+    active_maze_on_grid,
+    play_algorithm_animation,
+  },
+}) => ({
+  active_algorithm,
+  active_maze,
+  active_maze_on_grid,
+  play_algorithm_animation,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  end_algorithm_animation: () => dispatch(end_algorithm_animation_action()),
+  end_maze_animation: () => dispatch(end_maze_animation_action()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Grid);

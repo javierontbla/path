@@ -20,7 +20,7 @@ const addBorderWalls = (grid, cols, rows) => {
   return grid;
 };
 
-export const recursive_division = (graph, cols, rows) => {
+export const recursive_division_algorithm = (graph, cols, rows) => {
   // generating the border walls of the grid
   // this returns the grid with border walls
   let grid = addBorderWalls(graph, cols, rows);
