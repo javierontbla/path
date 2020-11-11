@@ -5,9 +5,10 @@ import { GridContainer, Columns, Rows, NodeContainer } from "./Grid_styles";
 import { NodeClass } from "../node_component/Node_Class";
 import Node from "../node_component/Node";
 import {
-  end_algorithm_animation_action,
-  end_maze_animation_action,
-  restart_grid_action,
+  selected_pathfinding_algorithm_active_action,
+  selected_maze_algorithm_active_action,
+  selected_pathfinding_algorithm_on_grid_action,
+  selected_maze_algorithm_on_grid_action,
 } from "../../redux/global_actions";
 import { a_star_algorithm } from "../../algorithms/a_star_algorithm";
 import { dijkstra_algorithm } from "../../algorithms/dijkstra";
@@ -16,12 +17,16 @@ import { recursive_division_algorithm } from "../../mazes/recursive_division_alg
 import { sidewinder_algorithm } from "../../mazes/sidewinder_algorithm";
 
 const Grid = ({
-  active_algorithm,
-  active_maze,
-  active_maze_on_grid,
-  play_algorithm_animation,
-  end_algorithm_animation,
-  end_maze_animation,
+  selected_pathfinding_algorithm,
+  selected_maze_algorithm,
+  selected_pathfinding_algorithm_active,
+  selected_maze_algorithm_active,
+  selected_pathfinding_algorithm_on_grid,
+  selected_maze_algorithm_on_grid,
+  selected_pathfinding_algorithm_active_fun,
+  selected_maze_algorithm_active_fun,
+  selected_pathfinding_algorithm_on_grid_fun,
+  selected_maze_algorithm_on_grid_fun,
 }) => {
   // screen size
   const columns = Math.floor(window.innerWidth / 30);
@@ -74,11 +79,20 @@ const Grid = ({
   }, []);
 
   useEffect(() => {
-    if (active_algorithm && play_algorithm_animation) {
-      run_algorithm(active_algorithm);
+    if (
+      selected_pathfinding_algorithm &&
+      selected_pathfinding_algorithm_active &&
+      !selected_pathfinding_algorithm_on_grid
+    ) {
+      run_algorithm(selected_pathfinding_algorithm);
     }
-    if (active_maze && !active_maze_on_grid) {
-      run_maze(active_maze);
+    if (
+      selected_maze_algorithm &&
+      selected_maze_algorithm_active &&
+      !selected_maze_algorithm_on_grid &&
+      !selected_pathfinding_algorithm_on_grid
+    ) {
+      run_maze(selected_maze_algorithm);
     }
   });
 
@@ -94,7 +108,7 @@ const Grid = ({
           `node_${path[i].i}_${path[i].j}`
         );
         node_js.className = "node_path";
-        if (i === path.length - 2) end_algorithm_animation();
+        if (i === path.length - 2) selected_pathfinding_algorithm_on_grid_fun();
       }, i * 75);
     }
   };
@@ -143,7 +157,7 @@ const Grid = ({
         }
 
         if (i === maze.length - 1) {
-          end_maze_animation();
+          selected_maze_algorithm_on_grid_fun();
         }
       }, i * 50);
     }
@@ -200,7 +214,7 @@ const Grid = ({
   // moving mouse around
   const on_mouse_enter = (i, j) => {
     if (!creating_obstacles) return;
-    if (i !== start_i || (j !== start_j && i !== end_i) || j !== end_j) {
+    if ((i !== start_i || j !== start_j) && (i !== end_i || j !== end_j)) {
       mouse_action("CREATE_OBSTACLE", i, j);
     }
   };
@@ -225,6 +239,7 @@ const Grid = ({
   const run_algorithm = (algorithm) => {
     switch (algorithm) {
       case "RUN_A_STAR_ALGORITHM":
+        selected_pathfinding_algorithm_active_fun();
         const [visited_a_star, path_a_star] = a_star_algorithm(
           grid[start_i][start_j],
           grid[end_i][end_j],
@@ -237,6 +252,7 @@ const Grid = ({
         }
         break;
       case "RUN_BFS_ALGORITHM":
+        selected_pathfinding_algorithm_active_fun();
         const [visited_bfs, path_bfs] = bfs_algorithm(
           grid[start_i][start_j],
           grid[end_i][end_j],
@@ -256,6 +272,7 @@ const Grid = ({
   const run_maze = (maze) => {
     switch (maze) {
       case "RUN_RECURSIVE_DIVISION_ALGORITHM":
+        selected_maze_algorithm_active_fun();
         const recursive_maze = recursive_division_algorithm(
           grid,
           columns,
@@ -265,6 +282,7 @@ const Grid = ({
         break;
 
       case "RUN_SIDEWINDER_ALGORITHM":
+        selected_maze_algorithm_active_fun();
         const sidewinder_maze = sidewinder_algorithm(grid, columns, rows);
         maze_nodes_animation(sidewinder_maze);
         break;
@@ -309,21 +327,31 @@ const Grid = ({
 // redux
 const mapStateToProps = ({
   global_reducer: {
-    active_algorithm,
-    active_maze,
-    active_maze_on_grid,
-    play_algorithm_animation,
+    selected_pathfinding_algorithm,
+    selected_maze_algorithm,
+    selected_pathfinding_algorithm_active,
+    selected_maze_algorithm_active,
+    selected_pathfinding_algorithm_on_grid,
+    selected_maze_algorithm_on_grid,
   },
 }) => ({
-  active_algorithm,
-  active_maze,
-  active_maze_on_grid,
-  play_algorithm_animation,
+  selected_pathfinding_algorithm,
+  selected_maze_algorithm,
+  selected_pathfinding_algorithm_active,
+  selected_maze_algorithm_active,
+  selected_pathfinding_algorithm_on_grid,
+  selected_maze_algorithm_on_grid,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  end_algorithm_animation: () => dispatch(end_algorithm_animation_action()),
-  end_maze_animation: () => dispatch(end_maze_animation_action()),
+  selected_pathfinding_algorithm_active_fun: () =>
+    dispatch(selected_pathfinding_algorithm_active_action()),
+  selected_maze_algorithm_active_fun: () =>
+    dispatch(selected_maze_algorithm_active_action()),
+  selected_pathfinding_algorithm_on_grid_fun: () =>
+    dispatch(selected_pathfinding_algorithm_on_grid_action()),
+  selected_maze_algorithm_on_grid_fun: () =>
+    dispatch(selected_maze_algorithm_on_grid_action()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Grid);

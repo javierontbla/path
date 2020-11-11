@@ -1,7 +1,30 @@
 :root {
   --border: #e4e6e4;
   --red: #e04136;
-  --visited: #6ab83f;
+  --visited: #74c745;
+}
+@keyframes visited_animation {
+  0% {
+    background-color: #f5f23a;
+  }
+  50% {
+    background-color: #83e04d;
+  }
+  100% {
+    background-color: var(--visited);
+  }
+}
+
+@keyframes obstacle_animation {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .node_,
@@ -29,10 +52,14 @@
 
 .node_obstacle {
   background-color: var(--border);
+  animation-name: obstacle_animation;
+  animation-duration: 250ms;
 }
 
 .node_visited {
   background-color: var(--visited);
+  animation-name: visited_animation;
+  animation-duration: 500ms;
 }
 
 .node_path {

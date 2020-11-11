@@ -163,12 +163,12 @@ export const FullIconsContainer = styled.div`
 `;
 
 export const Icon = styled(FontAwesomeIcon)`
-  font-size: ${(props) => (props.restart ? "1.9rem" : "2rem")};
+  font-size: ${(props) => (props.restart ? "1.8rem" : "2rem")};
   margin: 0rem 2rem 0rem 2rem;
   animation: ${(props) =>
     props.restart
       ? css`
-          ${IconAnimation} 0.5s linear
+          ${IconAnimation} 1s linear
         `
       : "none"};
   color: ${white};

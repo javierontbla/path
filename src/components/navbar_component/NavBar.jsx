@@ -8,10 +8,11 @@ import {
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 
 import {
-  set_active_algorithm_action,
-  set_active_maze_action,
-  start_algorithm_animation_action,
-  restart_grid_action,
+  selected_pathfinding_algorithm_action,
+  selected_maze_algorithm_action,
+  selected_pathfinding_algorithm_active_action,
+  selected_maze_algorithm_active_action,
+  restart_grid_active_action,
 } from "../../redux/global_actions";
 
 import {
@@ -36,14 +37,17 @@ import {
 } from "./NavBar_styles";
 
 const NavBar = ({
-  set_active_algorithm,
-  set_active_maze,
-  active_algorithm,
-  active_maze,
-  active_algorithm_on_grid,
-  active_maze_on_grid,
-  start_algorithm_animation,
-  restart_grid_function,
+  selected_pathfinding_algorithm,
+  selected_pathfinding_algorithm_active,
+  selected_maze_algorithm_active,
+  selected_pathfinding_algorithm_on_grid,
+  selected_maze_algorithm_on_grid,
+  selected_pathfinding_algorithm_fun,
+  selected_maze_algorithm_fun,
+  selected_pathfinding_algorithm_active_fun,
+  selected_maze_algorithm_active_fun,
+  restart_grid_icon,
+  restart_grid_active,
   restart_grid,
 }) => {
   const [option_1, set_option_1] = useState(false);
@@ -52,34 +56,55 @@ const NavBar = ({
   const [option_4, set_option_4] = useState(false);
   const [option_5, set_option_5] = useState(false);
 
-  const update_active_algorithm_animation = () => {
-    if (!active_algorithm) return;
-    if (active_algorithm_on_grid) return;
-    start_algorithm_animation();
+  // PATHFINDING ALGORITHM
+  const run_pathfinding_algorithm = () => {
+    if (
+      !selected_pathfinding_algorithm ||
+      selected_pathfinding_algorithm_active ||
+      selected_pathfinding_algorithm_on_grid
+    )
+      return;
+    selected_pathfinding_algorithm_active_fun();
   };
 
-  const update_active_algorithm = (algorithm, set_option, option) => {
-    if (active_algorithm) return;
-    set_active_algorithm(algorithm);
-    // reset all div colors
+  // MAZE ALGORITHM
+  const run_maze_algorithm = (maze, set_option) => {
+    if (
+      selected_maze_algorithm_active ||
+      selected_maze_algorithm_on_grid ||
+      selected_pathfinding_algorithm_on_grid ||
+      selected_pathfinding_algorithm_active
+    )
+      return;
+    set_option_4(false); // reset all div colors
+    set_option_5(false); // reset all div colors
+    set_option(true); // assign color to active algorithm only
+    selected_maze_algorithm_fun(maze); // update maze algorithm on redux
+    selected_maze_algorithm_active_fun();
+  };
+
+  const update_pathfinding_algorithm = (algorithm, set_option) => {
+    if (
+      selected_pathfinding_algorithm_active ||
+      selected_pathfinding_algorithm_on_grid ||
+      selected_maze_algorithm_active
+    )
+      return;
+    set_option_1(false); // reset all div colors
+    set_option_2(false); // reset all div colors
+    set_option_3(false); // reset all div colors
+    set_option(true); // assign color to active algorithm only
+    selected_pathfinding_algorithm_fun(algorithm); // update pathfinding algorithm on redux
+  };
+
+  const run_restart_grid = () => {
+    restart_grid();
+    restart_grid_active();
     set_option_1(false);
     set_option_2(false);
     set_option_3(false);
-    // assign color to active algorithm only
-    set_option(option);
-  };
-
-  const update_active_maze = (maze, set_option) => {
-    if (active_maze) return;
-    if (active_maze_on_grid) return;
     set_option_4(false);
     set_option_5(false);
-    set_option(true);
-    set_active_maze(maze);
-  };
-
-  const update_restart_grid = () => {
-    restart_grid_function();
   };
 
   return (
@@ -100,10 +125,9 @@ const NavBar = ({
             <Option1
               option={option_1}
               onClick={() =>
-                update_active_algorithm(
+                update_pathfinding_algorithm(
                   "RUN_A_STAR_ALGORITHM",
-                  set_option_1,
-                  true
+                  set_option_1
                 )
               }
             >
@@ -112,7 +136,7 @@ const NavBar = ({
             <Option2
               option={option_2}
               onClick={() =>
-                update_active_algorithm("DIJKSTRA", set_option_2, true)
+                update_pathfinding_algorithm("DIJKSTRA", set_option_2)
               }
             >
               Dijkstra
@@ -120,7 +144,7 @@ const NavBar = ({
             <Option3
               option={option_3}
               onClick={() =>
-                update_active_algorithm("RUN_BFS_ALGORITHM", set_option_3, true)
+                update_pathfinding_algorithm("RUN_BFS_ALGORITHM", set_option_3)
               }
             >
               BFS
@@ -128,12 +152,12 @@ const NavBar = ({
           </Options>
         </OptionsContainer>
         <Icon
-          icon={restart_grid ? faUndoAlt : faPlay}
-          restart={restart_grid ? true : false}
+          icon={restart_grid_icon ? faUndoAlt : faPlay}
+          restart={restart_grid_icon ? true : false}
           onClick={
-            restart_grid
-              ? () => update_restart_grid()
-              : () => update_active_algorithm_animation()
+            restart_grid_icon
+              ? () => run_restart_grid()
+              : () => run_pathfinding_algorithm()
           }
         />
         <OptionsContainer>
@@ -143,7 +167,7 @@ const NavBar = ({
             <Option4
               option={option_4}
               onClick={() =>
-                update_active_maze(
+                run_maze_algorithm(
                   "RUN_RECURSIVE_DIVISION_ALGORITHM",
                   set_option_4
                 )
@@ -154,7 +178,7 @@ const NavBar = ({
             <Option5
               option={option_5}
               onClick={() =>
-                update_active_maze("RUN_SIDEWINDER_ALGORITHM", set_option_5)
+                run_maze_algorithm("RUN_SIDEWINDER_ALGORITHM", set_option_5)
               }
             >
               Sidewinder
@@ -174,26 +198,32 @@ const NavBar = ({
 
 const mapStateToProps = ({
   global_reducer: {
-    active_algorithm,
-    active_maze,
-    active_algorithm_on_grid,
-    active_maze_on_grid,
-    restart_grid,
+    selected_pathfinding_algorithm,
+    selected_pathfinding_algorithm_active,
+    selected_maze_algorithm_active,
+    selected_pathfinding_algorithm_on_grid,
+    selected_maze_algorithm_on_grid,
+    restart_grid_icon,
   },
 }) => ({
-  active_algorithm,
-  active_maze,
-  active_algorithm_on_grid,
-  active_maze_on_grid,
-  restart_grid,
+  selected_pathfinding_algorithm,
+  selected_pathfinding_algorithm_active,
+  selected_maze_algorithm_active,
+  selected_pathfinding_algorithm_on_grid,
+  selected_maze_algorithm_on_grid,
+  restart_grid_icon,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  set_active_algorithm: (algorithm) =>
-    dispatch(set_active_algorithm_action(algorithm)),
-  set_active_maze: (maze) => dispatch(set_active_maze_action(maze)),
-  start_algorithm_animation: () => dispatch(start_algorithm_animation_action()),
-  restart_grid_function: () => dispatch(restart_grid_action()),
+  selected_pathfinding_algorithm_fun: (algorithm) =>
+    dispatch(selected_pathfinding_algorithm_action(algorithm)),
+  selected_maze_algorithm_fun: (maze) =>
+    dispatch(selected_maze_algorithm_action(maze)),
+  selected_pathfinding_algorithm_active_fun: () =>
+    dispatch(selected_pathfinding_algorithm_active_action()),
+  selected_maze_algorithm_active_fun: () =>
+    dispatch(selected_maze_algorithm_active_action()),
+  restart_grid_active: () => dispatch(restart_grid_active_action()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavBar);
