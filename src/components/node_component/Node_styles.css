@@ -64,6 +64,8 @@
 
 .node_path {
   background-color: var(--red);
+  animation-name: obstacle_animation;
+  animation-duration: 250ms;
 }
 
 .node_,

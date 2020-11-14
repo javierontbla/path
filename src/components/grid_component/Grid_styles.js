@@ -4,7 +4,7 @@ export const GridContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  margin: 1rem 0rem 0rem 0rem;
+  margin: 0.2rem 0rem 0rem 0rem;
 `;
 
 export const Columns = styled.div`

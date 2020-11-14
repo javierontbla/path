@@ -9,6 +9,8 @@ import {
   selected_maze_algorithm_active_action,
   selected_pathfinding_algorithm_on_grid_action,
   selected_maze_algorithm_on_grid_action,
+  obstacles_on_grid_action,
+  no_possible_path_action,
 } from "../../redux/global_actions";
 import { a_star_algorithm } from "../../algorithms/a_star_algorithm";
 import { dijkstra_algorithm } from "../../algorithms/dijkstra";
@@ -27,6 +29,8 @@ const Grid = ({
   selected_maze_algorithm_active_fun,
   selected_pathfinding_algorithm_on_grid_fun,
   selected_maze_algorithm_on_grid_fun,
+  obstacles_on_grid,
+  no_possible_path,
 }) => {
   // screen size
   const columns = Math.floor(window.innerWidth / 30);
@@ -170,6 +174,13 @@ const Grid = ({
     const node_js = document.getElementById(`node_${i}_${j}`);
     const node_react = grid[i][j];
 
+    if (
+      selected_pathfinding_algorithm_on_grid ||
+      selected_pathfinding_algorithm_active ||
+      selected_maze_algorithm_active
+    )
+      return;
+
     switch (action) {
       case "REMOVE_START_NODE":
         node_js.className = "node_";
@@ -187,11 +198,16 @@ const Grid = ({
         node_js.className = "node_end";
         node_react.end_node = true;
         break;
-      case "CREATE_OBSTACLE":
+      case "ADD_OBSTACLE":
         if (node_react.start_node || node_react.end_node) return;
         if (node_react.obstacle) return;
         node_js.className = "node_obstacle";
         node_react.obstacle = true;
+        break;
+      case "REMOVE_OBSTACLE":
+        if (node_react.start_node || node_react.end_node) return;
+        node_js.className = "node_";
+        node_react.obstacle = false;
         break;
       default:
         break;
@@ -200,6 +216,12 @@ const Grid = ({
 
   // pressing mouse
   const on_mouse_down = (i, j) => {
+    if (
+      selected_pathfinding_algorithm_on_grid ||
+      selected_pathfinding_algorithm_active ||
+      selected_maze_algorithm_active
+    )
+      return;
     if (i === start_i && j === start_j) {
       mouse_action("REMOVE_START_NODE", i, j);
       set_moving_start_node(true);
@@ -215,7 +237,11 @@ const Grid = ({
   const on_mouse_enter = (i, j) => {
     if (!creating_obstacles) return;
     if ((i !== start_i || j !== start_j) && (i !== end_i || j !== end_j)) {
-      mouse_action("CREATE_OBSTACLE", i, j);
+      if (grid[i][j].obstacle) {
+        mouse_action("REMOVE_OBSTACLE", i, j);
+      } else {
+        mouse_action("ADD_OBSTACLE", i, j);
+      }
     }
   };
 
@@ -233,6 +259,7 @@ const Grid = ({
       set_end_j(j);
     } else {
       set_creating_obstacles(false);
+      obstacles_on_grid();
     }
   };
 
@@ -249,6 +276,8 @@ const Grid = ({
         );
         if (visited_a_star && path_a_star) {
           visited_nodes_animation(visited_a_star, path_a_star);
+        } else {
+          no_possible_path();
         }
         break;
       case "RUN_BFS_ALGORITHM":
@@ -262,6 +291,8 @@ const Grid = ({
         );
         if (visited_bfs && path_bfs) {
           visited_nodes_animation(visited_bfs, path_bfs);
+        } else {
+          no_possible_path();
         }
         break;
       default:
@@ -301,7 +332,7 @@ const Grid = ({
                 {column.map((row, j) => (
                   <NodeContainer
                     key={`node_container_${i}_${j}`}
-                    onClick={() => mouse_action("CREATE_OBSTACLE", i, j)}
+                    onClick={() => mouse_action("ADD_OBSTACLE", i, j)}
                     onMouseDown={() => on_mouse_down(i, j)}
                     onMouseUp={() => on_mouse_up(i, j)}
                     onMouseEnter={() => on_mouse_enter(i, j)}
@@ -352,6 +383,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(selected_pathfinding_algorithm_on_grid_action()),
   selected_maze_algorithm_on_grid_fun: () =>
     dispatch(selected_maze_algorithm_on_grid_action()),
+  obstacles_on_grid: () => dispatch(obstacles_on_grid_action()),
+  no_possible_path: () => dispatch(no_possible_path_action()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Grid);

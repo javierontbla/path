@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { colors } from "../../colors/colors";
 
-const { red, white } = colors;
+const { red, white, black } = colors;
 
 const IconAnimation = keyframes`
   from {
@@ -14,6 +14,12 @@ const IconAnimation = keyframes`
   to {
     opacity: 1;
     display: block;
+  }
+`;
+
+const BlinkAnimation = keyframes`
+  50% {
+    opacity: 0;
   }
 `;
 
@@ -177,4 +183,38 @@ export const Icon = styled(FontAwesomeIcon)`
     cursor: pointer;
     opacity: 0.9;
   }
+`;
+
+export const Tooltip = styled.div`
+  position: relative;
+  font-size: 0.8rem;
+  font-family: "Righteous", cursive;
+  &:after {
+    position: absolute;
+    top: 0.5rem;
+    height: max-content;
+    width: max-content;
+    background: ${black};
+    opacity: 0.9;
+    left: 50%;
+    color: ${white};
+    padding: 0.5rem;
+    content: "${(props) => props.data}";
+    transform: translateX(-50%) translateY(100%) scale(0);
+    z-index: 2;
+    transition: 180ms transform;
+    transform-origin: top center;
+  }
+  &:hover:after {
+    transform: translateX(-50%) translateY(100%) scale(1);
+  }
+`;
+
+export const NoPathMsg = styled.div`
+  visibility: ${(props) => (props.msg ? "visible" : "hidden")};
+  font-family: "Righteous", cursive;
+  color: ${white};
+  font-size: 0.8rem;
+  padding: 0rem 0rem 0rem 0.45rem;
+  animation: ${BlinkAnimation} 1.5s linear infinite;
 `;
