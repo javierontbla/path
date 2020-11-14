@@ -231,7 +231,10 @@ const NavBar = ({
         </FullOptionsContainer>
         <FullIconsContainer>
           <Tooltip data={"Repository"}>
-            <a href={"https://github.com/javierontbla/path"} target="_blank">
+            <a
+              href={"https://github.com/javierontbla/pathfinding_visualizer"}
+              target="_blank"
+            >
               <Icon icon={faGithub} />
             </a>
           </Tooltip>
