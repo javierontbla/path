@@ -168,7 +168,10 @@ const NavBar = ({
               <Option2
                 option={option_2}
                 onClick={() =>
-                  update_pathfinding_algorithm("DIJKSTRA", set_option_2)
+                  update_pathfinding_algorithm(
+                    "RUN_DIJKSTRA_ALGORITHM",
+                    set_option_2
+                  )
                 }
               >
                 Dijkstra

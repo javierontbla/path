@@ -216,5 +216,10 @@ export const NoPathMsg = styled.div`
   color: ${white};
   font-size: 0.8rem;
   padding: 0rem 0rem 0rem 0.45rem;
-  animation: ${BlinkAnimation} 1.5s linear infinite;
+  animation: ${(props) =>
+    props.msg
+      ? css`
+          ${BlinkAnimation} 1.5s linear infinite
+        `
+      : "none"};
 `;

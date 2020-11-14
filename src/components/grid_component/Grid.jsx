@@ -13,7 +13,7 @@ import {
   no_possible_path_action,
 } from "../../redux/global_actions";
 import { a_star_algorithm } from "../../algorithms/a_star_algorithm";
-import { dijkstra_algorithm } from "../../algorithms/dijkstra";
+import { dijkstra_algorithm } from "../../algorithms/dijkstra_algorithm";
 import { bfs_algorithm } from "../../algorithms/bfs_algorithm";
 import { recursive_division_algorithm } from "../../mazes/recursive_division_algorithm";
 import { sidewinder_algorithm } from "../../mazes/sidewinder_algorithm";
@@ -59,7 +59,7 @@ const Grid = ({
             0,
             i,
             j,
-            0,
+            i === 0 && j === 0 ? 0 : Infinity,
             null,
             false,
             false,
@@ -185,10 +185,12 @@ const Grid = ({
       case "REMOVE_START_NODE":
         node_js.className = "node_";
         node_react.start_node = false;
+        node_react.distance = Infinity;
         break;
       case "ADD_START_NODE":
         node_js.className = "node_start";
         node_react.start_node = true;
+        node_react.distance = 0;
         break;
       case "REMOVE_END_NODE":
         node_js.className = "node_";
@@ -280,6 +282,20 @@ const Grid = ({
           no_possible_path();
         }
         break;
+      case "RUN_DIJKSTRA_ALGORITHM":
+        selected_pathfinding_algorithm_active_fun();
+        const [visited_dijkstra, path_dijkstra] = dijkstra_algorithm(
+          grid[end_i][end_j],
+          columns,
+          rows,
+          grid
+        );
+        if (path_dijkstra.length < 2) {
+          no_possible_path();
+        } else if (visited_dijkstra && path_dijkstra.length > 1) {
+          visited_nodes_animation(visited_dijkstra, path_dijkstra);
+        }
+        break;
       case "RUN_BFS_ALGORITHM":
         selected_pathfinding_algorithm_active_fun();
         const [visited_bfs, path_bfs] = bfs_algorithm(
@@ -289,10 +305,10 @@ const Grid = ({
           rows,
           grid
         );
-        if (visited_bfs && path_bfs) {
-          visited_nodes_animation(visited_bfs, path_bfs);
-        } else {
+        if (path_bfs.length < 2) {
           no_possible_path();
+        } else if (visited_bfs && path_bfs.length > 0) {
+          visited_nodes_animation(visited_bfs, path_bfs);
         }
         break;
       default:
