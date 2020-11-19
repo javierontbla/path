@@ -39,4 +39,4 @@ Creating your own Pathfinder Visualizer, it’s great practice for Data Structur
 
 **Demo**
 
-Link
+[Pathfinding Visualizer Project](https://javierontbla.github.io/pathfinding_visualizer/)

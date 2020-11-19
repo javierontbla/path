@@ -34,7 +34,7 @@ const Grid = ({
 }) => {
   // screen size
   const columns = Math.floor(window.innerWidth / 30);
-  const rows = Math.floor((window.innerHeight - 150) / 30);
+  const rows = Math.floor((window.innerHeight - 180) / 30);
   // creating grid
   const [grid, set_grid] = useState([]);
   // setting i and j coordinates for start node & end node
