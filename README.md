@@ -1,7 +1,5 @@
 # Pathfinding Visualizer
 
----
-
 **What is it?**
 
 The Pathfinding Visualizer project is a tool to observe and analyze how path searching algorithms (and maze generation algorithms) work behind the scenes.
