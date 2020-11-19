@@ -1,5 +1,6 @@
-<img src='https://firebasestorage.googleapis.com/v0/b/avgguido.appspot.com/o/como_hice_un_visualizador_de_algoritmos_con_javascript%2Fpath_logo.png?alt=media&token=3a823ffe-acfc-4fee-bbef-6a6c0d8019fb'
-width="150px" text-align="left" />
+### Pathfinding Visualizer
+
+---
 
 **What is it?**
 
@@ -29,7 +30,7 @@ First, fill the grid with obstacles (pressing down your mouse over it) or choose
 
 **Why making one?**
 
-Creating your own Pathfinder Visualizer, it’s great practice for Data Structures, Algorithms and Object-Oriented Programming. I would classify it as an **intermediate** project.
+Creating your own Pathfinder Visualizer, it’s great practice to understand better Data Structures, Algorithms and Object-Oriented Programming. I would classify it as an **intermediate** project.
 
 **Technologies Used**
 
@@ -39,4 +40,4 @@ Creating your own Pathfinder Visualizer, it’s great practice for Data Structur
 
 **Demo**
 
-[Pathfinding Visualizer Project](https://javierontbla.github.io/pathfinding_visualizer/)
+[Try it!](https://javierontbla.github.io/pathfinding_visualizer/)
